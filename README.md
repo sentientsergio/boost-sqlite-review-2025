@@ -1,4 +1,9 @@
-# Boost.SQLite Re-Review (Option A — Light Comparison)
+# Boost.SQLite Review
+
+### Review letter (paste-ready)
+
+- Recommendation: Conditional Accept
+- Read the letter: https://github.com/sentientsergio/boost-sqlite-review-2025/blob/main/submission.md
 
 **Reviewer:** Sergio DuBois  
 **Window:** Aug 25 – Sep 3, 2025  
@@ -9,20 +14,24 @@
 > **Methodology:** see `methodology.md`. Evidence links live in `evidence/` and the comparison snapshot lives in `comparison/`.
 
 ## Executive Summary (to be finalized)
-- Position Boost.SQLite relative to the comparators on: error model, typed results, extensibility (UDFs, vtables), docs, packaging.  
-- Call out 2–3 strengths and 2–3 trade-offs.  
+
+- Position Boost.SQLite relative to the comparators on: error model, typed results, extensibility (UDFs, vtables), docs, packaging.
+- Call out 2–3 strengths and 2–3 trade-offs.
 - Provide an **explicit vote** (Accept, Conditional Accept, or Reject) with 2–4 sentences of rationale.
 
 ## Deliverables
-- `submission.md` — paste-ready text for the Boost review mailing list thread.  
-- `comparison/feature-matrix.csv` — a small, auditable snapshot of differences.  
+
+- `submission.md` — paste-ready text for the Boost review mailing list thread.
+- `comparison/feature-matrix.csv` — a small, auditable snapshot of differences.
 - `evidence/EvidenceLog.csv` + `evidence/sources.md` — links & notes for claims.
 
 ## License
-- **Docs & data (this repo):** CC BY 4.0 (see `LICENSE`).  
+
+- **Docs & data (this repo):** CC BY 4.0 (see `LICENSE`).
 - **Any sample code under `/micro-probe`:** MIT (see `LICENSE-CODE`).
 
 ## Repo Structure
+
 ```
 boost-sqlite-review-2025/
 ├─ README.md
@@ -43,4 +52,4 @@ boost-sqlite-review-2025/
 
 ---
 
-**Status:** Seeded on 2025-08-26. Fill in `submission.md` and finalize `comparison/feature-matrix.csv` before posting.
+**Status:** Seeded on 2025-08-26.
