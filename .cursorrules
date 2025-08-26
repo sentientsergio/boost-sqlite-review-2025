@@ -1,0 +1,51 @@
+---
+description: Project-level rules for Cursor agents and edits in Boost.SQLite Re-Review (Option A — light comparison).
+globs:
+  - "README.md"
+  - "submission.md"
+  - "comparison/**/*.csv"
+  - "comparison/**/*.md"
+  - "evidence/**/*.csv"
+  - "evidence/**/*.md"
+  - "micro-probe/**/*.md"
+  - "90_prompts/**/*.md"
+  - "99_admin/**/*.md"
+alwaysApply: true
+---
+
+# Cursor Project Rules — Boost.SQLite Re-Review (Option A)
+
+## Project type
+Review writing (light comparison). This is **not** a software development repo.
+
+## Sources of truth
+- Narrative claims must be backed by entries in `evidence/` (add to `EvidenceLog.csv` and `sources.md`).  
+- The comparison snapshot lives in `comparison/feature-matrix.csv` and must stay **CSV** (no reformatting headers).
+
+## Agent workflow
+- **Research** → capture official links + quotes (≤ 25 words) into `evidence/` with dates.
+- **Matrix** → fill only what is supported by evidence; mark uncertain cells as `TODO` or `[VERIFY]`.
+- **Writer** → update `submission.md` (1–2 pages max); explicitly state **Accept / Conditional Accept / Reject**.
+- **Red-Team** → verify each non-obvious claim maps to a source; scrub speculative language.
+
+## Editing rules
+- Do **not** invent facts. If evidence is missing, leave the cell blank and add a TODO.
+- Keep CSV headers and column order unchanged. Use plain ASCII quotes in CSV.
+- Prefer first-party docs over blogs/mirrors.
+- Quotes (if used) must be ≤ 25 words to respect fair use.
+- Keep licensing clear: prose/data are CC BY 4.0; any code under `/micro-probe` is MIT.
+
+## Scope boundaries
+- This is **Option A**: avoid deep performance analysis or extended code probes unless clearly marked in `micro-probe/`.
+- Treat `sqlite_orm` as an ORM (different layer) and explain trade-offs without conflating categories.
+
+## Commit hygiene
+- `Evidence: add <lib> <topic>`
+- `Matrix: update <axis> — <lib>`
+- `Draft: submission — revise vote`
+- `RedTeam: pass <n>`
+
+## Review gates
+- **G1 (Evidence hygiene):** sources exist + dates captured.
+- **G2 (Matrix freeze):** verify `[VERIFY]` tags removed or justified.
+- **G3 (Submission ready):** explicit vote present; disclosure present; repo link ready.

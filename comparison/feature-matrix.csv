@@ -1,0 +1,12 @@
+Axis,Boost.SQLite,SQLiteCpp,sqlite_modern_cpp,sqlite_orm,SOCI,Notes
+Library type,Client wrapper (not an ORM),Client wrapper,Client wrapper,ORM mapping layer,Multi-DB abstraction,"Different layers: sqlite_orm is ORM; SOCI spans DB backends"
+Error model,Non-throwing interface,Exceptions,Exceptions,Exceptions by default; non-throw get_pointer available,Exceptions (soci_error),Confirm exact APIs in docs
+Typed results,Static/compile-time resultset helpers [VERIFY],Manual column access [VERIFY],Tuple/lambda extraction [VERIFY],Strong schema mapping via DSL [VERIFY],Dynamic row/rowset [VERIFY],"Frozen: retain [VERIFY] where evidence absent"
+Custom functions,Custom functions supported,DIY/limited helpers [VERIFY],DIY/limited helpers [VERIFY],UDF support exists [VERIFY],Backend-specific [VERIFY],Check official docs
+Virtual tables,Virtual tables supported,DIY [VERIFY],DIY [VERIFY],N/A (ORM) [VERIFY],Backend-specific [VERIFY],
+JSON/variant integration,Supports variants and JSON,Minimal [VERIFY],Minimal [VERIFY],N/A [VERIFY],N/A [VERIFY],
+Transactions,Yes,Yes,Yes,Yes [VERIFY],Yes [VERIFY],
+Packaging,Build from source (boost_sqlite/_ext),vcpkg,vcpkg,vcpkg,vcpkg [VERIFY],Add access dates
+License,Boost Software License 1.0,MIT,MIT,AGPL-3 (+ paid MIT),Boost Software License,Confirm with upstream READMEs
+Docs/examples,Quickstart + API ref [VERIFY],Docs + samples [VERIFY],README + examples [VERIFY],Tutorial + README [VERIFY],Full docs [VERIFY],
+Maintenance,Active? check CI/issues [VERIFY],Active [VERIFY],Active [VERIFY],Active [VERIFY],Active [VERIFY],Brief cadence notes
