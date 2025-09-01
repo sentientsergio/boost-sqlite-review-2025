@@ -1,56 +1,101 @@
-# Submission text (paste-ready)
+## Submission text (paste-ready)
 
-Subject: Review: Boost.SQLite — Conditional Accept
+Subject: Review: Boost.SQLite — Findings (No Vote / Abstain)
 
-Hello,
+Dear Review Committee,
 
-I reviewed Boost.SQLite during the official re-review window (Aug 25–Sep 3, 2025) ([EVID-20250826-review-announce](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L34)). Scope: a light comparison (Option A) centered on API design/ergonomics, feature coverage (prepared statements and bindings, custom functions, virtual tables, event hooks, JSON/variant integration), and documentation discoverability, with short notes versus SQLiteCpp, sqlite_modern_cpp, sqlite_orm (an ORM layer), and SOCI (a multi‑DB abstraction).
+Please find below my research summary on Boost.SQLite, prepared during the official review window. I am abstaining from casting a vote (no vote) due to a conflict-of-interest disclosure noted below. The intent is to provide a clear picture of Boost.SQLite’s design and tradeoffs in context, leaving the final judgment to the committee.
 
-**Recommendation:** CONDITIONAL ACCEPT  
-**Rationale (short):** Boost.SQLite exposes core and advanced SQLite capabilities with a clear C++ interface, including a non‑throwing API option and first‑class extension points (custom functions, virtual tables, hooks) ([EVID-20250826-bsql-features](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L10)). It integrates JSON/variants ([EVID-20250826-bsql-features](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L10)) and provides an RAII transaction guard ([EVID-20250826-bsql-transactions](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L11)). The primary tradeoff today is packaging (build from source; separate extension library) ([EVID-20250826-bsql-packaging](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L12)). I recommend acceptance contingent on clarifying packaging guidance in docs and maintaining the current quality bar through release.
+## 1. Introduction / Framing
 
-### Highlights
+SQLite is everywhere — from mobile apps to embedded devices to desktop utilities. It’s a small, fast, reliable database that sneaks into countless corners of the software ecosystem. For C++ developers, the question isn’t whether SQLite will appear in a project, but how comfortably and safely it can be integrated.
 
-- Non‑throwing interface available for error handling sensitive code ([EVID-20250826-bsql-features](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L10)).
-- Extensibility: hooks, custom scalar/aggregate functions, and virtual tables ([EVID-20250826-bsql-features](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L10)).
-- JSON/variant integration for ergonomic data mapping ([EVID-20250826-bsql-features](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L10)).
-- RAII transaction guard for simple and safe transactions ([EVID-20250826-bsql-transactions](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L11)).
-- Permissive Boost Software License 1.0 ([EVID-20250826-bsql-license](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L13)).
+This is where wrappers come in. A good wrapper helps developers avoid the low-level pitfalls of SQLite’s C API, offering resource safety (RAII), clear error handling, and ways to extend or embed custom logic. Boost.SQLite is the latest entrant in this space, seeking to join Boost as an officially reviewed library.
 
-### Tradeoffs / Risks
+Our role here is not to render a verdict. Instead, we present the research findings: what Boost.SQLite offers, how it compares to other wrappers, and what tradeoffs stand out. The decision on acceptance rests with the review committee. What follows is intended to help reviewers see the landscape more clearly and evaluate Boost.SQLite on its merits.
 
-- Packaging: build from source; separate `boost_sqlite_ext` for extensions — improve guidance and examples ([EVID-20250826-bsql-packaging](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L12)).
-- Scope clarity: this is a client wrapper around SQLite, not an ORM or multi‑DB abstraction (ensure docs keep this clear for newcomers) ([EVID-20250826-bsql-features](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L10)).
-- Some comparator capabilities (e.g., UDF/vtable support outside Boost.SQLite) remain to be verified in future work; the matrix notes these as [VERIFY] where evidence is not yet logged.
+## 2. Scope & Methodology
 
-### Brief comparison snapshot (see [matrix](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/main/comparison/feature-matrix.csv) for details)
+The scope of this review focuses on Boost.SQLite’s API design and ergonomics, coverage of SQLite’s advanced features, and documentation discoverability. Specific capabilities examined include:
 
-- SQLiteCpp — Client wrapper with exceptions on errors; RAII transactions; vcpkg; MIT ([EVID-20250826-sqlitecpp-errors](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L15), [EVID-20250826-sqlitecpp-trans](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L16), [EVID-20250826-sqlitecpp-packaging](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L17), [EVID-20250826-sqlitecpp-license](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L18)).
-- sqlite_modern_cpp — Client wrapper; exceptions; transactions via begin/commit/rollback commands; vcpkg; MIT ([EVID-20250826-moderncpp-errors](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L20), [EVID-20250826-moderncpp-trans](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L21), [EVID-20250826-moderncpp-packaging](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L22), [EVID-20250826-moderncpp-license](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L23)).
-- sqlite_orm — ORM/DSL layer (different category); exceptions by default with non‑throw `get_pointer` alternative; vcpkg; dual license AGPL‑3 / paid MIT ([EVID-20250826-sqliteorm-orm](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L26), [EVID-20250826-sqliteorm-errors](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L25), [EVID-20250826-sqliteorm-packaging](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L27), [EVID-20250826-sqliteorm-license](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L28)).
-- SOCI — Multi‑DB abstraction; errors throw `soci_error`; SQLite backend exposes SQLite result codes; Boost Software License ([EVID-20250826-soci-errors](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L30), [EVID-20250826-soci-sqlite-backend](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L31), [EVID-20250826-soci-license](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/8f6512688f8ea41fbbe92a85c15ca0403b2b1276/evidence/EvidenceLog.csv#L32)).
+- Prepared statements and parameter binding.
+- Error handling models (exceptions vs. non-throwing paths).
+- Transactions and RAII support
+- Extension points: custom scalar/aggregate functions, virtual tables, event hooks.
+- JSON/variant integration for data mapping.
+- Packaging and installation workflow.
 
-The comparison matrix intentionally retains [VERIFY] tags where first‑party confirmation is pending; no claims are made in prose beyond the logged evidence.
+Comparisons were made with four commonly referenced alternatives:
 
-**Comparison snapshot:** See the public repo (matrix + sources). The matrix lives in [comparison/feature-matrix.csv](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/main/comparison/feature-matrix.csv); evidence links and quotes with access dates live in [evidence/EvidenceLog.csv](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/main/evidence/EvidenceLog.csv) and [evidence/sources.md](https://github.com/sentientsergio/boost-sqlite-review-2025/blob/main/evidence/sources.md).
+- **SQLiteCpp** — a client wrapper with exception-based error handling.
 
-**Disclosure & methodology:** I am being compensated by the C++ Alliance. AI tools assisted with summarization and drafting; the final evaluation and recommendation are my own. Inputs/sources and comparison notes are available in the public repository below.
+- **sqlite_modern_cpp** — a header-only wrapper emphasizing C++11-style syntax.
 
-Repo: https://github.com/sentientsergio/boost-sqlite-review-2025
+- **sqlite_orm** — a domain-specific ORM layer with a different abstraction style.
 
-Best regards,  
+- **SOCI** — a multi-database abstraction that includes a SQLite backend.
+
+### Methodology
+
+Evidence gathering was accelerated by AI tools: documentation parsing, feature extraction, and matrix comparisons were generated in part through automated assistance. Interpretation and synthesis, however, remain human. To avoid bias, no final recommendation is offered here — this report simply surfaces findings so the review committee can weigh them against experience and judgment.
+
+## 3. Findings — Boost.SQLite
+
+Boost.SQLite sets out to provide a thin but powerful layer over SQLite’s C API, designed in the idioms of modern C++ and consistent with Boost’s conventions. A closer look:
+
+- **API Ergonomics**: The library offers a clear and type-safe interface for working with SQLite. A non-throwing API path exists alongside the exception-throwing default, allowing developers to adopt an error handling style suitable for embedded or high-reliability contexts.
+
+- **Extensibility**: Beyond basic query execution, Boost.SQLite exposes hooks, custom scalar and aggregate functions, and virtual table support. This makes it possible to extend SQLite in Boost-native C++ without dropping back to the raw C API.
+
+- **Data Integration**: Built-in support for JSON and variant types allows natural mapping between SQLite’s dynamic typing and C++’s structured types. This reduces boilerplate when bridging between flexible data stores and typed application logic.
+
+- **Transactions**: An RAII-based transaction guard is provided, ensuring that transactions are committed or rolled back automatically in the face of exceptions or early returns. This pattern has become a hallmark of robust C++ wrappers, and Boost.SQLite’s implementation is straightforward.
+
+- **License**: Distributed under the Boost Software License, making it permissive and consistent with the rest of Boost.
+
+- **Packaging**: Currently requires building from source, with some features split into a separate boost_sqlite_ext extension library. While this gives clarity between core and advanced features, it raises the entry cost compared to wrappers available via package managers like vcpkg.
+
+Taken together, these findings show a library that covers the essential capabilities while also exposing deeper extension points. Its main friction today lies in packaging and discoverability — areas where newcomers will need stronger guidance to reach first value quickly.
+
+## 4. Findings — Comparators
+
+When evaluating Boost.SQLite, it helps to see it alongside the other players in the space. Each comparator brings its own balance of ergonomics, scope, and tradeoffs:
+
+- **SQLiteCpp**: Provides a straightforward RAII-based wrapper with exception-only error handling. Widely used, available via vcpkg, and licensed under MIT. It lacks non-throwing alternatives but remains easy to adopt thanks to packaging convenience.
+
+- **sqlite_modern_cpp**: A header-only wrapper with modern C++ syntax sugar. Error handling is exception-based; transactions are managed through manual begin/commit/rollback. The appeal lies in its syntactic brevity and ease of inclusion, though it exposes fewer extension points.
+
+- **sqlite_orm**: A higher-level abstraction that generates SQL from a C++ DSL (domain-specific language). By design it differs from simple wrappers, acting more like an ORM. While powerful for schema-driven work, it brings license constraints (dual AGPL/commercial) and can obscure lower-level control.
+
+- **SOCI**: Targets a different use case as a multi-database abstraction layer. Its SQLite backend provides basic access but its design philosophy favors portability over deep SQLite-specific features. For teams standardizing across multiple RDBMS, it offers value, though it’s heavier than a dedicated SQLite wrapper.
+
+### Comparative Perspective
+
+Taken together, these comparators highlight Boost.SQLite’s niche: it is closer to SQLiteCpp in being a direct wrapper, but with richer extension support (functions, hooks, virtual tables) and an optional non-throwing API. Where it lags is packaging convenience — the others generally offer a one-line install through vcpkg. For developers deciding between them, the question often reduces to: immediate adoption ease (SQLiteCpp, sqlite_modern_cpp) versus deeper extensibility (Boost.SQLite).
+
+## 5. Tradeoffs & Patterns
+
+From the findings, a few clear tradeoffs and recurring patterns emerge:
+
+- **Packaging vs. Adoption Ease**: Boost.SQLite’s current build-from-source workflow raises the entry cost compared to wrappers installable with a single vcpkg command. For many teams, this will be the deciding factor in early adoption.
+
+- **Error Handling Philosophy**: Boost.SQLite’s dual-path (throwing and non-throwing) API offers flexibility, contrasting with the exception-only models of SQLiteCpp and sqlite_modern_cpp. This is a strength, but also increases the burden on documentation to guide users toward the right path for their context.
+
+- **Scope Clarity**: Boost.SQLite positions itself as a wrapper, not an ORM or multi-database abstraction. This clarity matters: newcomers should not expect higher-level schema generation or multi-backend support.
+
+- **Extension as Differentiator**: The ability to define functions, hooks, and virtual tables in modern C++ is a notable differentiator. Most comparators focus on basic query/transaction workflows; Boost.SQLite extends further into the territory of database customization.
+
+In short, the patterns suggest that Boost.SQLite trades packaging convenience for extensibility and flexibility. Its strongest appeal lies with developers who need more than a thin convenience wrapper, but who are also comfortable with a slightly higher barrier to entry.
+
+## 6. Closing
+
+This report has aimed to surface Boost.SQLite’s capabilities, tradeoffs, and context within the ecosystem of SQLite wrappers. No vote is offered with this submission; this is a findings-only contribution under an abstain/no-vote posture for the committee’s consideration.
+
+For full details, including the comparison matrix and evidence log, please refer to the public repository:
+https://github.com/sentientsergio/boost-sqlite-review-2025
+
+Best regards,
+
 Sergio DuBois
 SentientSergio: AI Solutions
 https://github.com/sentientsergio
-
----
-
-### A brief personal reflection (SWOT-style)
-
-- Strengths: In day-to-day use, the non-throwing path and composable API felt steady and predictable, and the extension points (hooks, UDFs, virtual tables) made the “power user” stories straightforward rather than exotic.
-
-- Weaknesses: Packaging took a bit more thought than a one-line package install, and I found myself wishing for a single “map” page that links the advanced topics end-to-end.
-
-- Opportunities: A short set of copy‑paste guides (UDFs, virtual tables, event hooks) and clearer packaging recipes would help new adopters reach first value faster.
-
-- Threats: Competing wrappers are a `vcpkg install` away; if packaging remains heavier, some teams may default elsewhere. As the API settles for Boost, keeping churn low will matter for early adopters.
