@@ -1,0 +1,19 @@
+OBJECTIVE
+From curated deep-research docs, produce a comparison CSV that matches comparison/feature-matrix.csv headers exactly.
+
+INPUTS
+1) Curated domain explainer and Boost.SQLite deep dive (plain text)
+2) Curated competitor overviews for the top four (plain text)
+3) The existing matrix headers:
+Axis,Boost.SQLite,SQLiteCpp,sqlite_modern_cpp,sqlite_orm,SOCI,Notes
+
+DELIVERABLE (PLAIN TEXT ONLY)
+- Emit only a CSV body (including header) using the exact columns above.
+- Populate cells only with claims supported by curated inputs; otherwise leave blank or add TODO/[VERIFY].
+- Keep ASCII quotes and commas; no Markdown.
+
+GUIDANCE
+- Use concise, neutral phrasing (e.g., "Exceptions", "Non-throwing interface").
+- Prefer identifiers when appropriate (e.g., type/function names) in Notes.
+- Do not invent facts; prefer blank + TODO over speculation.
+- If a competitor differs from the five columns, still fill what you can; do not add columns.
