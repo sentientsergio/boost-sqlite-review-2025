@@ -1,0 +1,26 @@
+OBJECTIVE
+Produce a curated deep dive on Boost.SQLite and a concise domain explainer on why SQLite C++ wrappers exist. This output will be curated into evidence and used to update a review letter that abstains from a vote.
+
+INPUTS
+1) Earlier draft paper: submission.md (use current main branch content)
+
+DELIVERABLES (PLAIN TEXT ONLY)
+A) Domain explainer: "Why SQLite C++ wrappers exist"
+- Explain the problem: SQLite exposes a C API; C++ wrappers address RAII, error handling, type mapping, and extensibility (UDFs, virtual tables, hooks).
+- Include concise definitions for: prepared statements and binding; transactions; custom functions (scalar/aggregate); virtual tables; hooks; JSON/variant mapping.
+- Provide 8–15 high-quality first-party sources with date accessed and ≤25-word quotes.
+
+B) Boost.SQLite deep dive (not a recommendation)
+- Standout features with identifiers (types/functions/macros) as named in docs/source.
+- Error model: throwing vs non-throwing APIs; list identifiers.
+- Transactions: RAII guards; identifiers; minimal snippets (≤10 lines when essential).
+- Extensibility: custom functions, virtual tables, hooks; identifiers; minimal snippets.
+- JSON/variant integration: identifiers; minimal snippets if essential.
+- Packaging and license: describe succinctly.
+- Provide 10–20 first-party sources with date accessed and ≤25-word quotes.
+
+REQUIREMENTS
+- Prefer first-party sources (official repo/docs). Add date accessed and a quote for each citation (≤25 words).
+- Use clear headings and bullet lists; keep code snippets minimal and relevant.
+- No recommendation or vote; strictly findings and citations.
+- Output must be plain text, suitable for pasting into evidence/deep-research/intake/.

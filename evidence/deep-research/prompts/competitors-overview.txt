@@ -1,0 +1,25 @@
+OBJECTIVE
+Identify the top four C++ SQLite wrappers (by maturity/usage/maintainership) and produce concise overviews suitable for comparison with Boost.SQLite.
+
+INPUTS
+1) Original draft paper: submission.md (use current main branch content)
+2) Domain explainer + Boost.SQLite deep dive produced by the companion prompt
+
+DELIVERABLES (PLAIN TEXT ONLY)
+A) Competitor selection (max 4)
+- Propose four primary competitors (can differ from the seed list if evidence supports).
+- For each, provide justification (maintenance activity, stars/downloads, adoption mentions, or official backing).
+
+B) Competitor overviews (for each of the four)
+- Name and repo URL.
+- Minimum supported C++ standard (cite).
+- 1–2 sentences describing key features and distinction.
+- Standout features with explicit identifiers (types/functions/macros) as named in docs/source; include minimal code where essential (≤10 lines).
+- Error model; transactions; extensibility (UDFs, virtual tables, hooks); packaging; license.
+- 5–12 first-party sources with date accessed and ≤25-word quotes.
+
+REQUIREMENTS
+- Prefer first-party sources. For popularity/maintenance, cite objective signals (e.g., release cadence, CI badges, package availability).
+- Use clear headings and bullet lists; minimal but concrete identifiers.
+- Output must be plain text, suitable for pasting into evidence/deep-research/intake/.
+- No recommendation or vote; strictly findings and citations.
