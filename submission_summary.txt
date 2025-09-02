@@ -1,6 +1,8 @@
 Subject: Boost.SQLite review submission - text summary and GitHub link
 
-Hello Boost Review Committee,
+Hello Boost Review List Members,
+
+This review has been prepared under the sponsorship of the C++ Alliance. It was generated with assistance from AI tools. It does not make a recommendation on acceptance; it is presented as an informational resource that the review manager and review list members may weigh as they deem appropriate.
 
 This message provides a concise, text-only summary of our review of Boost.SQLite. The full write-up, including competitor comparison, feature matrix, and references, is available here:
 https://github.com/sentientsergio/boost-sqlite-review-2025/blob/main/submission.md
@@ -15,11 +17,8 @@ How to participate
 - Please review the full write-up and, if helpful, the comparison matrix and evidence notes linked from it.
 - Questions, corrections, and discussion are welcome on the review list. Issues/PRs on the repository are also welcome.
 
-Disclosure
-- Prepared under C++ Alliance sponsorship with assistance from AI tools. Evidence sources and dates are logged in the repository.
-
 Thank you for your time and consideration.
 
 Best regards,
-Sergio and contributors
+Sergio
 https://github.com/sentientsergio/boost-sqlite-review-2025
