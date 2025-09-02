@@ -34,7 +34,7 @@
 
 ## Contributing
 
-- Discussion is welcome on the Boost review list.  
+- Discussion is welcome on the Boost review list.
 - Repository feedback via issues/PRs is appreciated (typos, clarifications, evidence additions).
 
 ## License
@@ -68,4 +68,5 @@ boost-sqlite-review-2025/
 ```
 
 ---
+
 Status: Actively maintained; see commit history for updates.

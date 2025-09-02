@@ -20,5 +20,3 @@ Copy from `deep-research/templates/` into `deep-research/curated/` and fill:
 - Add any cited link to `sources.md` with date accessed.
 - Add a corresponding row to `EvidenceLog.csv` with a ≤ 25‑word quote.
 - If evidence is missing or unclear, leave matrix cells blank and add a TODO.
-
-
