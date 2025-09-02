@@ -212,7 +212,20 @@ Finally, **licensing** is a significant differentiator. MIT’s attribution-in-b
 
 ---
 
-## **6\. References**
+## **6\. Methodology**
+
+This review was produced using a transparent, evidence-first workflow with human-in-the-loop (HITL) curation at each stage.
+
+- Approach: Iterative drafting in Cursor, guided by domain prompts and deep research. Interim workproducts were refined through HITL reviews and targeted red-team passes.
+- Evidence hygiene: Non-obvious claims are mapped to first-party sources wherever possible, with dates captured in `evidence/EvidenceLog.csv` and citations listed in `evidence/sources.md`.
+- Matrix discipline: Only evidence-backed entries were added to `comparison/feature-matrix.csv`. Uncertain items were marked `TODO` or `[VERIFY]` until confirmed.
+- Workproducts: `submission.md` (narrative), `comparison/feature-matrix.csv` (snapshot), and `evidence/` (quotes and links). Any optional probes are isolated under `micro-probe/`.
+- Tooling and AI: AI was used to accelerate drafting and synthesis; maintainers provided HITL curation and final edits to ensure accuracy and tone.
+- About the author: Prepared by Sergio, an AI solutions practitioner; see the project repository and the maintainer’s GitHub profile for background.
+
+---
+
+## **7\. References**
 
 \[1\] [https://www.sqlite.org/c3ref/stmt.html](https://www.sqlite.org/c3ref/stmt.html?utm_source=chatgpt.com)  
  \[2\] [https://github.com/tiendq/SQLiteCpp](https://github.com/tiendq/SQLiteCpp?utm_source=chatgpt.com)  
