@@ -4,7 +4,7 @@
 
 This review of Boost.SQLite has been prepared under the sponsorship of the C++ Alliance. The assessment has been generated with the assistance of AI tools. In light of this, it does not make a recommendation on whether the library should be accepted into Boost. Rather, it is presented as an informational resource that the review manager and committee may weigh as they deem appropriate.
 
-A meaningful Boost review must consider not only the proposed library itself but also its competitors. Boost represents the premiere collection of high-quality, peer-reviewed C++ libraries, and any new addition must be evaluated in the context of existing alternatives to ensure that it meets or exceeds the standards set by its peers.
+A meaningful Boost review should consider not only the proposed library but also its competitors. Boost is the premiere collection of high-quality, peer-reviewed C++ libraries; any new addition must demonstrate that it holds its ground against established peers.
 
 ---
 
