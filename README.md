@@ -2,28 +2,40 @@
 
 ### Review letter (paste-ready)
 
-- Recommendation: Conditional Accept
 - Read the letter: https://github.com/sentientsergio/boost-sqlite-review-2025/blob/main/submission.md
+- Text-only email summary: https://github.com/sentientsergio/boost-sqlite-review-2025/blob/main/submission_summary.txt
 
 **Reviewer:** Sergio DuBois  
-**Window:** Aug 25 – Sep 3, 2025  
-**Scope:** 1–2 pages focused on API design/ergonomics, feature coverage, docs clarity, and an explicit vote.  
-**Comparators:** SQLiteCpp, sqlite_modern_cpp, sqlite_orm (ORM, noted), SOCI (multi-DB abstraction).
+**Scope:** 1–2 pages focused on API design/ergonomics, feature coverage, docs clarity, and competitor context.  
+**Comparators:** SQLiteCpp, sqlite_modern_cpp, sqlite_orm (ORM perspective), SOCI (multi-DB abstraction).
 
-> **Disclosure:** I am being compensated by the C++ Alliance for this work. AI tools assisted with summarization and drafting; final judgments are my own.  
-> **Methodology:** see `methodology.md`. Evidence links live in `evidence/` and the comparison snapshot lives in `comparison/`.
+> **Disclosure:** Prepared under the sponsorship of the C++ Alliance with assistance from AI tools; final edits and judgments are human-curated.  
+> **Methodology:** High-level summary below; full detail in section 6 of `submission.md`. Evidence links live in `evidence/` and the comparison snapshot lives in `comparison/`.
 
-## Executive Summary (to be finalized)
+## Executive Overview
 
-- Position Boost.SQLite relative to the comparators on: error model, typed results, extensibility (UDFs, vtables), docs, packaging.
-- Call out 2–3 strengths and 2–3 trade-offs.
-- Provide an **explicit vote** (Accept, Conditional Accept, or Reject) with 2–4 sentences of rationale.
+- Strengths: dual-path error handling (exceptions and error_code), RAII transactions/savepoints, rich extensibility (custom functions, aggregates, virtual tables, hooks), and integration with Boost.JSON/variant.
+- Trade-offs: packaging not yet in major managers; adoption currently via source/CMake.
+- Landscape: compared with SQLiteCpp, sqlite_modern_cpp, sqlite_orm, and SOCI to clarify positioning and design trade-offs.
+- Licensing: Boost Software License; favorable for corporate use versus MIT attribution or AGPL.
 
 ## Deliverables
 
 - `submission.md` — paste-ready text for the Boost review mailing list thread.
+- `submission_summary.txt` — text-only email summary for the review list.
 - `comparison/feature-matrix.csv` — a small, auditable snapshot of differences.
 - `evidence/EvidenceLog.csv` + `evidence/sources.md` — links & notes for claims.
+
+## Methodology (high level)
+
+- Cursor-driven drafting informed by domain prompts and deep-research intake; interim workproducts refined with human-in-the-loop curation and targeted red-team passes.
+- Evidence-first: only evidence-backed matrix entries; unresolved items marked `TODO` or `[VERIFY]` until sourced. Dates and links captured in `evidence/`.
+- Scope: Option A (light comparison). Any optional probes are isolated under `micro-probe/`.
+
+## Contributing
+
+- Discussion is welcome on the Boost review list.  
+- Repository feedback via issues/PRs is appreciated (typos, clarifications, evidence additions).
 
 ## License
 
@@ -36,20 +48,24 @@
 boost-sqlite-review-2025/
 ├─ README.md
 ├─ submission.md
+├─ submission_summary.txt
 ├─ comparison/
 │  ├─ feature-matrix.csv
 │  └─ notes.md
 ├─ evidence/
 │  ├─ EvidenceLog.csv
 │  ├─ sources.md
-│  └─ snapshots/          # optional, for archived pages
+│  └─ deep-research/
+│     ├─ intake/
+│     ├─ prompts/
+│     └─ templates/
+├─ 90_prompts/
+├─ 99_admin/
 ├─ methodology.md
 ├─ micro-probe/           # optional tiny ergonomics checks
-├─ .cursorrules           # project editing & agent workflow rules
 ├─ LICENSE                # CC BY 4.0 for prose/data
 └─ LICENSE-CODE           # MIT for sample code
 ```
 
 ---
-
-**Status:** Seeded on 2025-08-26.
+Status: Actively maintained; see commit history for updates.
