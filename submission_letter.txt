@@ -1,0 +1,234 @@
+Subject: Boost.SQLite review letter - full text (with GitHub link)
+
+Hello Boost Review List Members,
+
+This review has been prepared under the sponsorship of the C++ Alliance. It was generated with assistance from AI tools. It does not make a recommendation on acceptance; it is presented as an informational resource that the review manager and review list members may weigh as they deem appropriate.
+
+For a formatted version on GitHub (same contents), see:
+https://github.com/sentientsergio/boost-sqlite-review-2025/blob/main/submission.md
+
+Introduction
+A meaningful Boost review must consider not only the proposed library itself but also its competitors. Boost represents the premiere collection of high-quality, peer-reviewed C++ libraries, and any new addition must be evaluated in the context of existing alternatives to ensure that it meets or exceeds the standards set by its peers.
+
+1. Problem Domain: SQLite Wrappers
+SQLite is one of the most widely deployed databases, but its interface is a C API. Developers must manually open and close connections, finalize every prepared statement, and check error codes after each call. This model, while minimal and portable, creates fragility: forgetting to call sqlite3_finalize() leaks memory; missing an error code check allows silent failure.
+
+RAII and Safety. Wrappers arose to bind SQLite's resources to C++ object lifetimes. A Database or Statement object is finalized in its destructor, guaranteeing cleanup even during exceptions. This RAII pattern eliminates entire categories of bugs common in raw C code.
+
+Error Handling. The C API signals errors via integer codes and sqlite3_errmsg(). Wrappers lift this into C++ exceptions or structured error_code objects, letting developers choose between clean exception-driven code or predictable error-code checking. This parallels patterns in Boost.Asio and other libraries.
+
+Type Mapping. SQLite's type system is dynamic: any column can store integers, text, or blobs at runtime. The C API requires developers to manually call sqlite3_column_int, sqlite3_column_text, etc., based on expected types. Wrappers provide type-safe mappings to int, std::string, or even variant types, reducing casting errors and aligning with C++'s stronger type system.
+
+Prepared Statements and Binding. SQLite encourages precompiled statements with parameter binding. In raw C this means multiple sqlite3_bind_* calls. Wrappers streamline this by accepting tuples, operator<< chaining, or lambda-based binding, making prepared statements both safe and ergonomic.
+
+Transactions. SQLite requires all operations to occur within transactions. In C this means issuing BEGIN and ensuring COMMIT or ROLLBACK across all error paths. Wrappers provide RAII transaction guards: constructing a Transaction object issues BEGIN, commit() finalizes, and the destructor rolls back automatically if commit wasn't called. This prevents dangling open transactions.
+
+Extensibility. SQLite is unusually extensible: users can register scalar functions, define aggregate functions, implement virtual tables, or hook into commit/update events. Doing this in raw C means writing function-pointer shims. Wrappers modernize this by allowing lambdas or functors with typed signatures, making extension feel native to C++.
+
+Modern Features. Some wrappers integrate JSON libraries or variant containers. This makes it possible to bind a JSON value directly into a query, or receive results as a variant without predeclaring the exact column type.
+
+In sum, wrappers solve four pain points of SQLite's C API: resource safety, error handling, type safety, and extensibility. They are not replacements for SQLite but amplifiers, giving C++ developers the ability to use SQLite naturally, idiomatically, and safely.
+
+2. Competitor List (Snapshot)
+Below is a text-only snapshot (no tables) of key alternatives and distinctions:
+
+- SQLiteCpp — Repo: https://github.com/SRombauts/SQLiteCpp — Min C++: C++11 — License: MIT — Distinction: Established, widely packaged (vcpkg, Homebrew, Debian). RAII classes (SQLite::Database, SQLite::Statement), exception-only error model.
+- sqlite_modern_cpp — Repo: https://github.com/SqliteModernCpp/sqlite_modern_cpp — Min C++: C++14 (C++17 optional) — License: MIT — Distinction: Single-header, fluent stream syntax (db << "SELECT..." >> callback). Typed exception hierarchy.
+- sqlite_orm — Repo: https://github.com/fnc12/sqlite_orm — Min C++: C++14 — License: AGPL v3 / commercial MIT — Distinction: Type-safe ORM DSL (make_storage, make_table). Schema sync, migrations, transactions. Dual-licensed.
+- SOCI — Repo: https://github.com/SOCI/soci — Min C++: C++14 — License: Boost Software License — Distinction: Multi-database abstraction (SQLite3, PostgreSQL, MySQL, Oracle). Clean stream syntax (sql << "SELECT ..." >> into(var)), RAII transaction.
+
+3. Boost.SQLite Deep Dive
+Boost.SQLite is a modern C++17 wrapper designed not to obscure SQLite's C API, but to augment it. The library offers both safety and expressive power, aligning with familiar Boost idioms while covering the full range of SQLite features.
+
+Error Model
+Boost.SQLite's error handling follows a dual-path approach. Developers can opt for exception-based APIs or non-throwing overloads. The throwing versions raise boost::system::system_error populated with SQLite's error codes and messages. For environments where exceptions are undesirable, nearly every operation also provides an overload that accepts a boost::system::error_code& and an error_info& reference, avoiding throws while still surfacing detailed error diagnostics. This design mirrors Boost.Asio and other libraries that cater to both camps.
+
+Transactions and Savepoints
+Transaction safety is central to Boost.SQLite. A boost::sqlite::transaction object begins a transaction on construction and guarantees rollback unless commit() is called. This RAII guard prevents unintentional open transactions if an exception is thrown or a function exits early. For finer-grained control, boost::sqlite::savepoint provides the same semantics for nested transactions. Developers can scope operations at multiple levels, committing or rolling back as needed, with safety guaranteed by the destructor's rollback behavior.
+
+Example:
+boost::sqlite::connection conn("app.db");
+{
+    boost::sqlite::transaction txn(conn);
+    conn.execute("INSERT INTO logs VALUES ('entry');");
+    txn.commit(); // rollback occurs automatically if omitted
+}
+
+Extensibility
+Where Boost.SQLite stands out is its embrace of SQLite's extension mechanisms in C++ idioms:
+- Custom scalar functions can be registered with create_scalar_function, binding a C++ lambda directly to SQL.
+- Aggregate functions are implemented by writing a struct with step() and final() methods, letting developers accumulate and return results type-safely.
+- Virtual tables are exposed via create_module, one of the rare wrappers to support this advanced feature. Virtual tables allow developers to surface external data sources (files, in-memory data structures, services) as SQL tables.
+- Hooks are installed through simple functions like commit_hook, update_hook, and rollback_hook, each accepting a C++ callable. These enable event-driven designs, such as logging or cache invalidation, without dropping down to raw C callbacks.
+
+Modern Integration
+Boost.SQLite leverages other Boost libraries to integrate smoothly with modern data types. By including <boost/sqlite/json.hpp>, developers can bind and retrieve boost::json::value objects directly, avoiding manual serialization. Internally, the library uses boost::variant2::variant to represent SQLite values, enabling safe conversion and flexible handling of multiple types.
+
+Packaging and License
+Currently, the library is distributed as two components: boost_sqlite for the core and boost_sqlite_ext for advanced extensions. While not yet available via vcpkg or other package managers, acceptance into Boost proper would resolve that. Licensing is under the Boost Software License, widely considered one of the most permissive OSS licenses.
+
+Summary of Boost.SQLite
+Boost.SQLite delivers both breadth and depth. It offers safety through RAII transactions and dual-path error handling, extensibility through functions, virtual tables, and hooks, and modern convenience through JSON and variant integration. Its design stays close to SQLite's foundations while making them natural for C++ developers, positioning it as a comprehensive wrapper among its peers.
+
+4. Competitor Deep Dives
+
+4.1 SQLiteCpp
+SQLiteCpp is one of the oldest and most widely adopted wrappers for SQLite in C++. Active since 2012, it targets C++11 and has built a reputation for stability and simplicity. Because it is packaged in vcpkg, Debian, and Homebrew, it is often the first choice for developers who need something reliable with minimal integration overhead.
+
+The library is built around RAII: a SQLite::Database object opens and closes a connection, while SQLite::Statement ensures that prepared statements are finalized on destruction. This design avoids resource leaks without demanding explicit calls from the user.
+
+Error handling is fully exception-based. Any SQLite error throws SQLite::Exception, derived from std::runtime_error. While this keeps client code uncluttered, it provides no alternative for projects that avoid exceptions.
+
+Transactions are handled through the SQLite::Transaction guard. Constructing one issues a BEGIN, and the destructor rolls back unless commit() has been called:
+SQLite::Transaction txn(db);
+db.exec("INSERT INTO logs VALUES ('test');");
+txn.commit(); // rollback occurs automatically if omitted
+
+Extensibility is deliberately limited. The library provides access to the raw sqlite3* handle via Database::getHandle(), but offers no native C++ abstractions for user-defined functions, virtual tables, or hooks. SQLiteCpp is MIT licensed.
+
+4.2 sqlite_modern_cpp
+sqlite_modern_cpp takes a different approach, embracing modern syntax and minimalism. It is a single-header library requiring C++14 (with optional C++17 features). Its key distinction is the use of stream-like operators for binding and extracting values. Code reads fluently, almost like embedded SQL:
+
+db << "INSERT INTO tbl VALUES (?,?);" << x << y;
+db << "SELECT number FROM numbers;" >> [](int n){ std::cout << n; };
+
+This syntax hides boilerplate and lets developers chain operations with lambdas. It is easy to drop into projects and is also available through vcpkg.
+
+Errors are reported through a rich exception hierarchy. sqlite::sqlite_exception carries error codes and SQL text, while subclasses such as sqlite::errors::constraint_primarykey map directly to SQLite's extended error codes. This allows granular exception handling:
+
+try {
+  db << "INSERT INTO users(id) VALUES(1);";
+} catch (sqlite::errors::constraint_primarykey& e) {
+  std::cerr << "Primary key violation: " << e.get_sql() << std::endl;
+}
+
+Extensibility is partial. Scalar functions can be added via db.define("func", lambda), but virtual tables and hooks are unsupported. Transactions are handled manually by issuing SQL strings (db << "begin;"; ... db << "commit;";), which works but offers no RAII guard. Like SQLiteCpp, it is MIT licensed.
+
+4.3 sqlite_orm
+sqlite_orm positions itself differently, as an object-relational mapper for SQLite. Instead of writing SQL, developers describe schema and queries in C++ code using templates. It requires C++14 and has become popular for projects that prefer to avoid raw SQL entirely.
+
+Schema definition is expressive and type-safe:
+struct User { int id; std::string name; };
+auto storage = make_storage("app.db",
+  make_table("users",
+    make_column("id", &User::id, primary_key()),
+    make_column("name", &User::name)));
+storage.sync_schema();
+
+The library automatically generates SQL and syncs schemas when changes occur. Queries are written as C++ expressions, for example: storage.get_all<User>(where(c(&User::name) == "Alice")). This approach provides compile-time safety.
+
+Transactions are flexible. Developers can control them manually, use RAII with transaction_guard, or wrap a function in a lambda that commits or rolls back automatically based on return value:
+
+auto guard = storage.transaction_guard();
+storage.insert(User{1, "Alice"});
+guard.commit(); // rollback on destruction if not called
+
+Extensibility is high at the ORM layer (custom types, schema migrations), but the library does not provide abstractions for SQLite-specific features like hooks or virtual tables. Licensing is dual: AGPL v3 for open-source use, or a paid MIT license for proprietary projects.
+
+4.4 SOCI
+SOCI is broader in scope. It is a general-purpose database access library that supports multiple backends including SQLite, PostgreSQL, MySQL, Oracle, and ODBC. Its design philosophy is to provide a uniform interface so the same code can work with different databases simply by changing the backend.
+
+The syntax is clean and type-safe:
+soci::session sql(soci::sqlite3, "db.sqlite");
+int count;
+sql << "SELECT COUNT(*) FROM users", soci::into(count);
+
+Binding is done via into() and use() calls, ensuring type correctness. SOCI also provides RAII for transactions: soci::transaction tr(sql); automatically rolls back unless explicitly committed.
+
+Error handling relies on exceptions of type soci::soci_error. The SQLite backend extends this with sqlite3_soci_error, which allows inspection of the underlying SQLite result codes.
+
+The trade-off is that SOCI deliberately avoids SQLite-specific extensions. If developers want to create virtual tables or define custom functions, they must drop to the raw sqlite3* handle. The strength of SOCI lies in its portability and robustness, not in deep SQLite specialization. SOCI is licensed under the Boost Software License.
+
+5. Comparison (text-only)
+Below are text summaries of the comparative axes that would normally appear in a table.
+
+Error Handling
+- Boost.SQLite: Dual API offering exceptions or error codes.
+- SQLiteCpp: Exceptions only.
+- sqlite_modern_cpp: Exceptions only, with typed subclasses.
+- sqlite_orm: Exceptions, with some non-throwing variants.
+- SOCI: Exceptions only.
+
+Transactions
+- Boost.SQLite: RAII transaction and savepoint.
+- SQLiteCpp: RAII transaction.
+- sqlite_modern_cpp: Manual SQL (BEGIN/COMMIT).
+- sqlite_orm: Manual; RAII transaction_guard; lambda-wrapped functions.
+- SOCI: RAII soci::transaction.
+
+Extensibility
+- Boost.SQLite: Scalar and aggregate functions, virtual tables, and hooks (commit, update, rollback).
+- SQLiteCpp: Limited; raw handle access only.
+- sqlite_modern_cpp: Scalar functions only.
+- sqlite_orm: ORM-level customization; not SQLite-specific hooks or vtables.
+- SOCI: Limited; raw handle access for SQLite-specific features.
+
+Modern Features
+- Boost.SQLite: Integrates Boost.JSON and uses boost::variant2::variant.
+- SQLiteCpp: Basic C++11 feature set.
+- sqlite_modern_cpp: Optional std::optional and std::variant if compiled with C++17.
+- sqlite_orm: Template DSL, schema reflection.
+- SOCI: Portability focus across databases.
+
+Packaging
+- Boost.SQLite: CMake build; not yet in vcpkg.
+- SQLiteCpp: vcpkg, Debian, Homebrew.
+- sqlite_modern_cpp: Header-only; vcpkg, AUR.
+- sqlite_orm: Header-only; vcpkg, Conan.
+- SOCI: vcpkg, Linux distributions.
+
+License
+- Boost.SQLite: Boost Software License.
+- SQLiteCpp: MIT (binary attribution required in some contexts).
+- sqlite_modern_cpp: MIT.
+- sqlite_orm: AGPL v3 or commercial MIT.
+- SOCI: Boost Software License.
+
+In summary, Boost.SQLite is strongest in correctness (error handling and transactions) and power (extensibility). Its packaging disadvantage is likely temporary. With a permissive license, it represents a complete and future-oriented choice among current SQLite wrappers.
+
+6. Methodology
+This review was produced using a transparent, evidence-first workflow with human-in-the-loop (HITL) curation at each stage.
+- Approach: Iterative drafting in Cursor, guided by domain prompts and deep research. Interim workproducts were refined through HITL reviews and targeted red-team passes.
+- Evidence hygiene: Non-obvious claims are mapped to first-party sources wherever possible, with dates captured in evidence/EvidenceLog.csv and citations listed in evidence/sources.md.
+- Matrix discipline: Only evidence-backed entries were added to comparison/feature-matrix.csv. Uncertain items were marked TODO or [VERIFY] until confirmed.
+- Workproducts: submission.md (narrative), comparison/feature-matrix.csv (snapshot), and evidence/ (quotes and links). Any optional probes are isolated under micro-probe/.
+- Tooling and AI: AI was used to accelerate drafting and synthesis; maintainers provided HITL curation and final edits to ensure accuracy and tone.
+- About the author: Prepared by Sergio, an AI solutions practitioner; see the project repository and the maintainer's GitHub profile for background.
+
+7. References
+[1] https://www.sqlite.org/c3ref/stmt.html
+[2] https://github.com/tiendq/SQLiteCpp
+[3] https://listarchives.boost.org/Archives/boost/2024/03/256300.php
+[4] https://klemens.dev/sqlite/
+[5] https://www.sqlite.org/cintro.html
+[6] https://www.sqlite.org/lang_transaction.html
+[7] https://www.sqlite.org/cintro.html
+[8] https://www.sqlite.org/cintro.html
+[9] https://sqlite.org/c3ref/update_hook.html
+[10] https://listarchives.boost.org/Archives/boost/2024/03/256300.php
+[11] http://srombauts.github.io/SQLiteCpp/
+[12] https://github.com/SRombauts/SQLiteCpp
+[13] https://github.com/SqliteModernCpp/sqlite_modern_cpp
+[14] https://github.com/SqliteModernCpp/sqlite_modern_cpp
+[15] https://github.com/fnc12/sqlite_orm
+[16] https://github.com/fnc12/sqlite_orm
+[17] https://github.com/SOCI/soci
+[18] https://soci.sourceforge.net/doc/master/
+[19] https://klemens.dev/sqlite/group__reference.html
+[20] https://klemens.dev/sqlite/group__reference.html
+[21] https://klemens.dev/sqlite/group__reference.html
+[22] https://klemens.dev/sqlite/group__reference.html
+[23] https://klemens.dev/sqlite/group__reference.html
+[24] https://klemens.dev/sqlite/group__reference.html
+[25] https://klemens.dev/sqlite/group__reference.html
+[26] https://klemens.dev/sqlite/group__reference.html
+[27] https://github.com/klemens-morgenstern/sqlite
+[28] https://listarchives.boost.org/Archives/boost/2024/03/256300.php
+[29] https://github.com/klemens-morgenstern/sqlite
+[30] http://www.boost.org/LICENSE_1_0.txt
+
+Thank you for your time and consideration. Discussion on the review list is welcome; feedback in the repository via issues/PRs is also appreciated.
+
+Best regards,
+Sergio
+https://github.com/sentientsergio/boost-sqlite-review-2025
