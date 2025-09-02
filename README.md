@@ -3,7 +3,7 @@
 ### Review letter (paste-ready)
 
 - Read the letter: https://github.com/sentientsergio/boost-sqlite-review-2025/blob/main/submission.md
-- Text-only email summary: https://github.com/sentientsergio/boost-sqlite-review-2025/blob/main/submission_summary.txt
+- Text-only review letter: https://github.com/sentientsergio/boost-sqlite-review-2025/blob/main/submission_letter.txt
 
 **Reviewer:** Sergio DuBois  
 **Scope:** 1–2 pages focused on API design/ergonomics, feature coverage, docs clarity, and competitor context.  
@@ -22,7 +22,7 @@
 ## Deliverables
 
 - `submission.md` — paste-ready text for the Boost review mailing list thread.
-- `submission_summary.txt` — text-only email summary for the review list.
+- `submission_letter.txt` — full text-only review letter (email-ready).
 - `comparison/feature-matrix.csv` — a small, auditable snapshot of differences.
 - `evidence/EvidenceLog.csv` + `evidence/sources.md` — links & notes for claims.
 
@@ -48,7 +48,7 @@
 boost-sqlite-review-2025/
 ├─ README.md
 ├─ submission.md
-├─ submission_summary.txt
+├─ submission_letter.txt
 ├─ comparison/
 │  ├─ feature-matrix.csv
 │  └─ notes.md
